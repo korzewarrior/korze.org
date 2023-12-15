@@ -6,7 +6,7 @@ $(document).ready(function(){
 });
 
 // articles stuff
-const articles = ['2023.08.18-1', '2023.08.18-2', '2023.08.18-3', '2023.08.18-4', '2023.09.27', '2023.10.17'];
+// const articles = ['2023.08.18-1', '2023.08.18-2', '2023.08.18-3', '2023.08.18-4', '2023.09.27', '2023.10.17'];
 
 function loadArticles() {
     articles.sort((a, b) => {
