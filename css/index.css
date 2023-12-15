@@ -1,0 +1,97 @@
+/* index.css */
+
+@font-face {
+    font-family: 'Akzidenz Grotesk Black';
+    src: url('/fonts/Akzidenz-grotesk-light.ttf') format('truetype');
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: -1;
+    backdrop-filter: blur(0px);
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    background: #0e0e0e;
+    font-family: 'Akzidenz Grotesk Black', Arial, sans-serif;
+    font-size: larger;
+    color: #e0e0e0;
+    overflow-x: hidden;
+    background: url('/images/james-animated.png') no-repeat center center fixed; 
+    background-size: cover;
+}
+
+#wrapper {
+    max-width: 1200px;
+    min-height: 100vh;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#main-container {
+    display: flex;
+    width: 100%;
+    min-height: 100%;
+    flex: 1 0 auto;
+}
+
+#content {
+    margin-right: 260px;
+    padding: 5%;
+    width: calc(100% - 260px);
+    padding-bottom: 50px;
+}
+
+#content section {
+    margin-bottom: 20px;
+}
+
+#content h2 {
+    font-size: larger;
+    color: #b388ba;
+}
+
+#content ul {
+    list-style-type: square;
+}
+
+@media (max-width: 600px) {
+    #wrapper {
+        height: 100vh;
+        box-sizing: content-box;
+    }
+
+    #sidebar {
+        position: fixed;
+        right: 0;
+        width: 240px;
+        height: calc(100vh - 40px);
+        margin: initial;
+        padding: 20px;
+        padding-top: 0;
+    }
+
+    #content {
+        position: static;
+        width: calc(100% - 260px);
+        margin-right: 260px;
+        padding: 5%;
+    }
+}

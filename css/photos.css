@@ -1,0 +1,19 @@
+.photo-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.photo-grid a img {
+    width: 200px;
+    height: auto;
+    margin: 10px;
+    border-radius: 15px;
+    box-shadow: 0px 0px 10px 5px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease-in-out;
+    border: 1px solid #1c1c1c;
+}
+
+.photo-grid a img:hover {
+    transform: scale(2);
+}
