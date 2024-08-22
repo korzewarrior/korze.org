@@ -5,7 +5,7 @@
 
 body {
     background-color: white;
-    background: url('paper.jpeg');
+    background: url('paper.jpg');
     font-family: 'CustomTypewriter', monospace; /* Updated to use the custom typewriter font */
     color: black;
     padding: 40px;
