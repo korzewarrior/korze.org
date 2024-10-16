@@ -3,22 +3,42 @@
     src: url('typewriter.ttf') format('truetype');
 }
 
+:root {
+    --main-text-color: rgba(70, 41, 41, 0.973);
+}
+
 body {
-    background-color: white;
+    background-color: rgb(255, 255, 255);
     background: url('paper.jpg');
+    background-color: rgba(255, 255, 255, 0.26);
+    background-blend-mode: overlay;
     font-family: 'CustomTypewriter', monospace;
-    color: black;
+    color: var(--main-text-color);
     padding: 20px;
     line-height: 1.6;
     text-align: justify;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+.page {
+    max-width: 8.5in; /* Standard US letter paper width */
+    width: 90%;
+    margin: 5vh auto;
+    padding: 5vh 10%;
+    background: url('paper.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* Keeps the background fixed during scroll */
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.23);
 }
 
-.page {
-    max-width: 840px;
-    margin: 20px;
-    padding: 20px;
-    box-sizing: border-box;
-    background: white;
+@media (max-width: 768px) {
+    .page {
+        background-size: contain; /* Adjust to contain for smaller screens */
+    }
 }
 
 .header {
@@ -33,7 +53,20 @@ body {
     text-align: justify;
 }
 
+.pagenumber {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+}
+
+.pagenumber p {
+    font-size: 14px;
+}
+
 h1 {
+    margin-top: 40px;
     font-size: 24px;
     font-weight: bold;
     margin: 0;
@@ -42,18 +75,20 @@ h1 {
 
 h2 {
     font-size: 20px;
-    margin-top: 20px;
-}
-
-p, li {
-    font-size: 18px;
-    margin-bottom: 20px;
     margin: 0;
+    margin-top: 20px;
     padding: 0;
 }
 
+p {
+    font-size: 18px;
+    margin: 0;
+    padding: 0;
+    margin-top: 0px;
+}
+
 a {
-    color: black;
+    color: var(--main-text-color);
     text-decoration: none;
 }
 
@@ -64,9 +99,14 @@ a:hover {
 ul {
     list-style-type: none;
     padding: 0;
+    margin-top: 0px;
+    margin-left: 40px;
 }
 
-li::before {
-    color: black;
-    font-weight: bold;
+li {
+    padding-left: 40px;
+}
+
+html {
+    scroll-behavior: smooth;
 }
