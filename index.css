@@ -8,14 +8,10 @@ body {
     background: url('paper.jpg');
     font-family: 'CustomTypewriter', monospace;
     color: black;
-    padding: 40px;
+    padding: 20px;
     line-height: 1.6;
     text-align: justify;
-}
-
-.typewriter {
-    padding: 20px;
-    max-width: 800px;
+    max-width: 840px;
     margin: auto;
 }
 
