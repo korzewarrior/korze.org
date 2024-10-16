@@ -15,8 +15,10 @@ body {
 
 .page {
     max-width: 840px;
-    margin: auto;
+    margin: 20px;
     padding: 20px;
+    box-sizing: border-box;
+    background: white;
 }
 
 .header {
