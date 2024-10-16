@@ -11,8 +11,12 @@ body {
     padding: 20px;
     line-height: 1.6;
     text-align: justify;
+}
+
+.page {
     max-width: 840px;
     margin: auto;
+    padding: 20px;
 }
 
 .header {
