@@ -10,7 +10,6 @@
 body {
     background-color: rgb(255, 255, 255);
     background: url('paper.jpg');
-    background-color: rgba(255, 255, 255, 0.26);
     background-blend-mode: overlay;
     font-family: 'CustomTypewriter', monospace;
     color: var(--main-text-color);
