@@ -58,7 +58,6 @@ ul {
 }
 
 li::before {
-    content: "• ";
     color: black;
     font-weight: bold;
 }
