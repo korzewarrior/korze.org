@@ -4,13 +4,12 @@
 }
 
 :root {
-    --main-text-color: rgba(70, 41, 41, 0.973);
+    --main-text-color: rgba(75, 37, 37, 0.973);
 }
 
 body {
-    background-color: rgb(255, 255, 255);
-    background: url('paper.jpg');
-    background-blend-mode: overlay;
+    background: url('paper.jpg') no-repeat center center fixed;
+    background-size: cover;
     font-family: 'CustomTypewriter', monospace;
     color: var(--main-text-color);
     padding: 20px;
@@ -22,21 +21,20 @@ body {
     justify-content: center;
     align-items: flex-start;
 }
+
 .page {
-    max-width: 8.5in; /* Standard US letter paper width */
+    max-width: 8.5in;
     width: 90%;
     margin: 5vh auto;
     padding: 5vh 10%;
-    background: url('paper.jpg');
+    background: url('paper.jpg') no-repeat center center;
     background-size: cover;
-    background-position: center;
-    background-attachment: fixed; /* Keeps the background fixed during scroll */
     box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.23);
 }
 
 @media (max-width: 768px) {
     .page {
-        background-size: contain; /* Adjust to contain for smaller screens */
+        background-size: contain;
     }
 }
 
@@ -75,7 +73,7 @@ h1 {
 h2 {
     font-size: 20px;
     margin: 0;
-    margin-top: 20px;
+    margin-top: 40px;
     padding: 0;
 }
 
@@ -99,13 +97,48 @@ ul {
     list-style-type: none;
     padding: 0;
     margin-top: 0px;
-    margin-left: 40px;
+    margin-left: 0px;
 }
 
-li {
+.flex-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+.flex-list li .title {
+    min-width: 180px;
+    margin-right: 10px;
+}
+
+.flex-list li .content {
+    flex-grow: 1;
+}
+
+.flex-list li ul {
+    width: 80%;
+    margin: 0 auto;
     padding-left: 40px;
+}
+
+.flex-list li ul li {
+    display: flex;
+    justify-content: space-between;
+    padding-left: 0;
 }
 
 html {
     scroll-behavior: smooth;
+}
+
+.faq-answer {
+    display: flex;
+    align-items: baseline;
+    margin-left: 20px;
+}
+
+.faq-answer p {
+    margin: 0;
+    padding-left: 5px; /* Adjust padding as needed */
 }
