@@ -8,8 +8,7 @@
 }
 
 body {
-    background: url('paper.jpg') no-repeat center center fixed;
-    background-size: cover;
+    background-color: #f9f9f9; /* Pleasant, soft white for the overall site */
     font-family: 'CustomTypewriter', monospace;
     color: var(--main-text-color);
     padding: 20px;
@@ -27,9 +26,10 @@ body {
     width: 90%;
     margin: 5vh auto;
     padding: 5vh 10%;
-    background: url('paper.jpg') no-repeat center center;
+    background: url('paper.jpg') no-repeat center center; /* Paper background only for the .page */
     background-size: cover;
     box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.23);
+    border-radius: 10px; /* Optional: Add some rounding to the .page container for a smoother look */
 }
 
 @media (max-width: 768px) {
