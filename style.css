@@ -1,0 +1,453 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Load Custom Font */
+@font-face {
+    font-family: 'TypewriterFont';
+    src: url('fonts/typewriter.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'TypewriterFont', monospace, sans-serif; /* Apply typewriter font */
+    background-color: #1a1a1a; /* Dark background */
+    color: #e0e0e0; /* Light text */
+    overflow: hidden; /* Prevent scrollbars during initial load/setup */
+    text-transform: lowercase; /* Global lowercase */
+}
+
+#interactive-space {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    /* background: url('paper.jpg') center/cover; */ /* Removed paper texture */
+    background-color: transparent; /* Make this layer see-through */
+    overflow: hidden; /* Keep preventing scroll */
+    z-index: 2; /* Ensure this is above grid and scanlines */
+}
+
+/* Noise/Scanline Overlay */
+#interactive-space::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0) 0px,
+        rgba(0, 0, 0, 0) 1px,
+        rgba(0, 0, 0, 0.03) 2px,
+        rgba(0, 0, 0, 0.06) 3px /* Increased opacity of dark line */
+    );
+    opacity: 0.3; /* Tone down scanlines again */
+    pointer-events: none; /* Allow clicks through */
+    animation: scanline-move 15s linear infinite; /* Slightly faster */
+    z-index: 1; /* Below interactive space, above grid */
+}
+
+@keyframes scanline-move {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 100vh; }
+}
+
+/* Styles for Animated Background Grid */
+#background-grid {
+    position: fixed; /* Cover the whole viewport */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0; /* Behind interactive space */
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    overflow: hidden;
+    pointer-events: none; /* Not interactive */
+}
+
+#background-grid span {
+    font-family: monospace; /* Use a fixed-width font */
+    font-size: 12px; /* Slightly larger characters */
+    width: 14px; /* Adjusted fixed width */
+    height: 14px; /* Adjusted fixed height */
+    text-align: center;
+    line-height: 14px; /* Adjusted line height */
+    color: rgba(224, 224, 224, 0.2); /* Subtle grid color */
+    transition: color 0.5s ease, opacity 0.5s ease; /* Smooth transitions */
+    opacity: 0.2; /* Subtle grid opacity */
+}
+
+/* Styles for Workbench Items */
+.workbench-item {
+    position: absolute; /* Position items freely */
+    background-color: rgba(50, 50, 50, 0.7); /* Semi-transparent background */
+    border: 1px solid #444;
+    padding: 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+    min-width: 120px;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    color: #ccc;
+    /* z-index: 2; */ /* Removed - items live within #interactive-space context */
+}
+
+/* Keyframes for Glitch Effect - Simplified to Color Pulse */
+@keyframes glitch-hover {
+    0% { background-color: rgba(50, 50, 50, 0.7); } /* Start Grey */
+    50% { background-color: rgba(190, 147, 253, 0.9); } /* Brighter Midpoint Purple */
+    100% { background-color: rgba(50, 50, 50, 0.7); } /* End Grey */
+}
+
+/* Keyframes for More Intense Click Glitch */
+@keyframes glitch-click {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); opacity: 1; border-color: #444; }
+    10% { transform: translate(-8px, 4px) skewX(-10deg); opacity: 0.5; border-color: #ff6b6b; }
+    30% { transform: translate(6px, -5px) skewX(8deg); opacity: 1; border-color: #87ceeb; }
+    50% { transform: translate(-4px, 3px) skewX(-5deg); opacity: 0.7; border-color: #d0a0ff; }
+    70% { transform: translate(5px, -2px) skewX(4deg); opacity: 1; border-color: #444; }
+    90% { transform: translate(-2px, 1px) skewX(-2deg); opacity: 0.8; }
+}
+
+/* Class to trigger click glitch */
+.workbench-item.glitching {
+    animation: glitch-click 0.5s linear forwards; /* Play once */
+}
+
+.workbench-item:hover {
+    /* Replace standard hover with glitch animation */
+    animation: glitch-hover 1.5s ease-in-out infinite alternate; /* Slower, smoother, alternates */
+    /* Keep a subtle shadow maybe? */
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.workbench-item span {
+    font-size: 2.5em; /* Make icons larger */
+    /* Raised effect */
+    text-shadow: 
+        1px 1px 1px rgba(0, 0, 0, 0.6), /* Dark shadow bottom-right */
+        -1px -1px 1px rgba(255, 255, 255, 0.2); /* Light highlight top-left */
+}
+
+.workbench-item p {
+    font-size: 0.9em;
+    color: #ccc;
+}
+
+/* Styles for Content Viewers */
+.content-viewer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9); /* Start slightly scaled down */
+    width: 80%;
+    max-width: 800px;
+    max-height: 80vh;
+    background-color: rgba(30, 30, 30, 0.95); /* Darker, less transparent */
+    border: 1px solid #555;
+    border-radius: 10px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0s linear 0.4s, transform 0.4s ease;
+    overflow-y: auto; /* Allow scrolling if content exceeds height */
+}
+
+.content-viewer.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+    transition: opacity 0.4s ease, visibility 0s linear 0s, transform 0.4s ease;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 2.5em;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.close-btn:hover {
+    color: #fff;
+}
+
+.content-viewer h2 {
+    margin-bottom: 20px;
+    color: #eee;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+}
+
+.content-viewer p {
+    margin-bottom: 1.2em; /* Increase paragraph spacing */
+    line-height: 1.6;
+    color: #ccc;
+}
+
+/* Optional: Dim background when viewer is open */
+body.viewer-open #interactive-space {
+    filter: blur(5px) brightness(0.6);
+    transition: filter 0.4s ease;
+    pointer-events: none; /* Disable clicks/hovers on background items when viewer is open */
+}
+
+/* We'll add styles for the interactive elements here */
+
+/* Specific positions for items */
+#item-games {
+    top: 35%;
+    left: 20%;
+    transform: rotate(-5deg); /* Slight rotation */
+}
+
+#item-photos {
+    top: 55%;
+    left: 30%;
+    transform: rotate(3deg);
+}
+
+#item-code {
+    top: 30%;
+    left: 60%;
+    transform: rotate(8deg);
+}
+
+#item-about {
+    top: 65%;
+    left: 75%;
+    transform: rotate(-2deg);
+}
+
+/* Styles for Project Entries within Viewers */
+.project-entry {
+    background-color: rgba(60, 60, 60, 0.5);
+    border: 1px solid #4a4a4a;
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.project-entry h3 {
+    color: #d0a0ff; /* A distinct color for project titles */
+    margin-bottom: 15px;
+}
+
+.project-entry p {
+    margin-bottom: 8px;
+    color: #bbb;
+}
+
+.project-entry strong {
+    color: #ddd;
+}
+
+.project-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    border: 1px solid #555;
+    background-color: #2a2a2a; /* BG for missing images */
+    display: block; /* Prevents extra space below */
+    min-height: 100px; /* Ensure space even if image fails */
+}
+
+/* Styles for Photo Gallery within Viewer */
+.photo-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive grid */
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.photo-item {
+    background-color: rgba(60, 60, 60, 0.5);
+    border: 1px solid #4a4a4a;
+    border-radius: 4px;
+    padding: 10px;
+    text-align: center;
+}
+
+.gallery-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 3px;
+    margin-bottom: 8px;
+    background-color: #2a2a2a; /* BG for missing images */
+    min-height: 120px; /* Placeholder height */
+    display: block;
+}
+
+.caption {
+    font-size: 0.85em;
+    color: #bbb;
+    margin-top: 5px;
+    font-style: italic;
+}
+
+/* Style for links in code viewer */
+.code-link {
+    color: #87ceeb; /* Sky blue color for links */
+    text-decoration: none;
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.code-link:hover {
+    color: #a0e0ff;
+    text-decoration: underline;
+}
+
+/* Styles for About & Contact Viewer */
+#viewer-about h3 {
+    color: #d0a0ff; /* Match project entry title color */
+    margin-top: 25px; /* Space above section headings */
+    margin-bottom: 10px;
+    border-bottom: 1px dashed #555; /* Subtle separator */
+    padding-bottom: 8px;
+}
+
+#viewer-about h3:first-of-type {
+    margin-top: 0; /* No top margin for the very first heading */
+}
+
+#viewer-about ul {
+    list-style: none; /* Remove default bullets */
+    padding-left: 0;
+}
+
+#viewer-about li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+#viewer-about li strong {
+    color: #ddd; /* Slightly brighter label */
+    display: inline-block;
+    width: 120px; /* Align labels nicely */
+    margin-right: 10px;
+}
+
+#viewer-about .faq-entry {
+    margin-bottom: 15px;
+    padding-left: 10px;
+    border-left: 2px solid #555; /* Indent FAQ slightly */
+}
+
+#viewer-about .faq-entry p {
+    margin-bottom: 5px;
+}
+
+#viewer-about a {
+    color: #87ceeb; /* Use the same light blue as code links */
+    text-decoration: none;
+}
+
+#viewer-about a:hover {
+    text-decoration: underline;
+}
+
+/* Styles for Photo Placeholder */
+.placeholder-notice {
+    border: 1px dashed #555;
+    padding: 25px;
+    margin-top: 30px;
+    text-align: center;
+    background-color: rgba(40, 40, 40, 0.6);
+    border-radius: 8px;
+}
+
+.placeholder-notice p {
+    margin-bottom: 10px;
+    line-height: 1.4;
+    font-size: 1.1em;
+    color: #bbb;
+}
+
+.placeholder-notice a {
+    color: #87ceeb; /* Use the same light blue as code links */
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.placeholder-notice a:hover {
+    text-decoration: underline;
+}
+
+/* Styles for Loading/Error Indicators */
+.loading-indicator,
+.error-message {
+    text-align: center;
+    font-style: italic;
+    color: #888; /* Dim color */
+    padding: 40px 0; /* Add some space */
+    font-size: 1.2em;
+}
+
+.error-message {
+    color: #ff6b6b; /* Reddish color for errors */
+    font-weight: bold;
+}
+
+/* Styles for Intro Content / Site Title */
+.intro-content {
+    position: absolute; /* Position relative to viewport */
+    top: 20px; /* Adjust spacing from top */
+    left: 20px; /* Adjust spacing from left */
+    padding: 15px;
+    background-color: rgba(30, 30, 30, 0.65); /* Slightly less transparent background */
+    border-radius: 5px;
+    z-index: 3; /* Above background/scanlines, below viewers */
+    max-width: 300px; /* Prevent it getting too wide */
+    pointer-events: none; /* Make non-interactive */
+}
+
+.intro-content h1 {
+    font-size: 1.8em; /* Larger title size */
+    color: #f0f0f0; /* Slightly brighter */
+    margin-bottom: 5px;
+    text-shadow: 
+        1px 1px 1px rgba(0, 0, 0, 0.6),
+        -1px -1px 1px rgba(255, 255, 255, 0.1); /* Subtle raised effect */
+}
+
+.intro-content h2 { /* Style for 'shake out the bits' */
+    font-size: 1em;
+    color: #bbb;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-weight: normal;
+}
+
+.intro-content p {
+    font-size: 0.9em;
+    color: #aaa;
+    line-height: 1.4;
+    margin-bottom: 3px;
+}
+
+.intro-content p.abstract {
+    margin-top: 10px;
+    font-style: italic;
+    color: #bbb;
+} 

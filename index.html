@@ -1,107 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>korze</title>
-        <link rel="stylesheet" href="index.css">
-        <meta name="description" content="portfolio of korze, a game designer and developer based in Phoenix, AZ.">
-        <meta name="keywords" content="korze, game design, development, photography, technology">
-    </head>
-    <body>
-        <div class="page">
-            <header class="header">
-                <h1>SHAKE OUT THE BITS</h1>
-                <br>
-                <p>korze(warrior)</p>
-                <br>
-                <p>phoenix, az, usa</p>
-                <p>est. 1991</p>
-            </header>
-
-            <main class="content">
-                <section id="abstract">
-                    <h2>ABSTRACT:</h2>
-                    <p>i make games, write code, capture moments, and explore new technology. learning how to be a chill guy.</p>
-                </section>
-                
-                <section id="games">
-                    <h2>GAMES:</h2>
-                    <p>these are my personal pet projects, created for fun and passion. they are not commercial releases, and public uploads might not be available at the moment. however, feel free to reach out if you're interested, and I may be able to share them upon request!</p>
-                    <ul class="flex-list">
-                        <li><span class="title">moonfall</span> <span class="content">cozy fishing RPG with fantasy elements</span></li>
-                        <li><span class="title">lone ring</span> <span class="content">parody of the One Ring's underwater journey</span></li>
-                        <li><span class="title">for we were kings</span> <span class="content">visceral high-fantasy RTS with modernized retro design</span></li>
-                        <li><span class="title">solus</span> <span class="content">atmospheric space survival game with immersive storytelling </span></li>
-                        <li><span class="title">star tournament</span> <span class="content">FPS with stylized graphics and innovative movement mechanics</span></li>
-                        <li><span class="title">pirate games</span> <span class="content">collection of pirate-themed mini-games</span></li>
-                    </ul>
-                </section>
-
-
-                <section id="projects">
-                    <h2>PROJECTS:</h2>
-                    <ul class="flex-list">
-                        <li><span class="title">disktro</span> <span class="content">Linux distribution ISO sourcing tool</span></li>
-                        <li><span class="title">msjeevs</span> <span class="content">AI-powered email client that revolutionizes email interaction</span></li>
-                        <li><span class="title">bOObs</span> <span class="content">unified bootable USB system for ISOs and system utilities</span></li>
-                    </ul>
-                </section>
-
-                <section id="hobbies">
-                    <h2>HOBBIES:</h2>
-                    <ul class="flex-list">
-                        <li><span class="title">games</span> <span class="content">playing and analyzing various video game genres</span></li>
-                        <li><span class="title">skateboarding</span> <span class="content">cruising streets and practicing tricks</span></li>
-                        <li><span class="title">boxing</span> <span class="content">training and sparring for fitness and skill</span></li>
-                        <li><span class="title">lifting</span> <span class="content">strength training and bodybuilding</span></li>
-                        <li><span class="title">books</span> <span class="content">reading fantasy novels and technology publications</span></li>
-                        <li><span class="title">fantasy</span> <span class="content">exploring imaginary worlds through literature and games</span></li>
-                        <li><span class="title">technology</span> <span class="content">staying updated with latest tech trends and gadgets</span></li>
-                        <li><span class="title">linux</span> <span class="content">exploring and customizing various distributions</span></li>
-                        <li><span class="title">photography</span> <span class="content">street, candid, portrait, and bodybuilding</span></li>
-                    </ul>
-                </section>
-
-                <section id="background">
-                    <h2>BACKGROUND:</h2>
-                    <ul class="flex-list">
-                        <li><span class="title">caa</span> <span class="content">field marketing manager</span></li>
-                        <li><span class="title">verizon</span> <span class="content">core infrastructure & network engineer</span></li>
-                        <li><span class="title">air force</span> <span class="content">cyber transport (3d1x2)</span></li>
-                        <li><span class="title">college</span> <span class="content">comp sci & cyber security @ asu</span></li>
-                    </ul>
-                </section>
-                <section id="faq">
-                    <h2>FAQ:</h2>
-                    <ul>
-                        <li><strong>Q:</strong> Can I hire you for photography, web development, app creation, or other projects?</li>
-                        <li>
-                            <div class="faq-answer">
-                                <strong>A:</strong> 
-                                <p>not right now, thank you for your interest</p>
-                            </div>
-                        </li>
-                        <br>
-                        <li><strong>Q:</strong> What does "korze" mean?</li>
-                        <li>
-                            <div class="faq-answer">
-                                <strong>A:</strong> 
-                                <p>warrior</p>
-                            </div>
-                        </li>
-                    </ul>
-                </section>
-            </main>
-
-            <footer class="footer">
-                <h2>CONTACT:</h2>
-                <p>you can reach me via email at <a href="mailto:korzewarrior@gmail.com">korzewarrior@gmail.com</a></p>
-            </footer>
-
-            <div class="pagenumber">
-                <p>-1-</p>
-            </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Korze - Portfolio Experience</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="background-grid"></div> <!-- Container for animated background -->
+    <div id="interactive-space">
+        <!-- Workbench Items -->
+        <div class="workbench-item" id="item-games" data-section="games" data-initial-top="35" data-initial-left="20">
+            <!-- Icon/Image for Games -->
+            <span>◇</span> 
+            <p>Games</p>
         </div>
-    </body>
-</html>
+        <div class="workbench-item" id="item-photos" data-section="photos" data-initial-top="55" data-initial-left="30">
+            <!-- Icon/Image for Photos -->
+            <span>□</span>
+             <p>Photos</p>
+        </div>
+        <div class="workbench-item" id="item-code" data-section="code" data-initial-top="30" data-initial-left="60">
+            <!-- Icon/Image for Code -->
+            <span>&gt;_</span>
+             <p>Code</p>
+        </div>
+         <div class="workbench-item" id="item-about" data-section="about" data-initial-top="65" data-initial-left="75">
+            <!-- Icon/Image for Contact -->
+            <span>*</span>
+             <p>About</p>
+        </div>
+    </div>
+
+    <div class="intro-content">
+        <h1>korze(warrior)</h1>
+        <p>phoenix, az, usa</p>
+        <p>est. 19xx</p>
+        <h2>shake out the bits</h2>
+        <p class="abstract">i make games, write code, capture photos, and explore new technology. learning how to be a chill guy.</p>
+    </div>
+
+    <!-- Content Viewers (Hidden Initially) -->
+    <div id="viewer-games" class="content-viewer" data-viewer="games">
+        <div class="viewer-content-placeholder"></div> <!-- Content will be loaded here -->
+    </div>
+
+    <div id="viewer-photos" class="content-viewer" data-viewer="photos">
+        <div class="viewer-content-placeholder"></div> <!-- Content will be loaded here -->
+    </div>
+
+    <div id="viewer-code" class="content-viewer" data-viewer="code">
+        <div class="viewer-content-placeholder"></div> <!-- Content will be loaded here -->
+    </div>
+
+    <div id="viewer-about" class="content-viewer" data-viewer="about">
+       <div class="viewer-content-placeholder"></div> <!-- Content will be loaded here -->
+    </div>
+
+    <script src="script.js"></script> <!-- We'll need JS for interactivity -->
+</body>
+</html> 
