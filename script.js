@@ -145,38 +145,41 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Item Drifting Logic --- 
-    let driftInterval = null; 
+    let driftAnimationId = null;
+    const itemData = new Map(); // Store data like initial pos, current transform
     const introContent = document.querySelector('.intro-content'); // Cache title block
 
     function startDrifting() {
-        if (driftInterval) clearInterval(driftInterval);
+        if (driftAnimationId) cancelAnimationFrame(driftAnimationId); // Clear existing if any
 
-        driftInterval = setInterval(() => {
+        function driftLoop() {
             const titleRect = introContent.getBoundingClientRect(); // Get title bounds
 
             items.forEach(item => {
                 // Don't drift if hovered or glitching
                 if (item.matches(':hover') || item.classList.contains('glitching')) return;
 
-                // Read current position or initial data attribute
-                const baseTop = parseFloat(item.dataset.initialTop);
-                const baseLeft = parseFloat(item.dataset.initialLeft);
+                const data = itemData.get(item);
+                if (!data) return; // Skip if data not initialized
+
                 // Get current *styled* position for smooth continuation, default to base if unset
-                const currentTop = parseFloat(item.style.top || baseTop);
-                const currentLeft = parseFloat(item.style.left || baseLeft);
+                let currentTranslateX = data.currentTranslateX;
+                let currentTranslateY = data.currentTranslateY;
 
                 // Calculate small random drift (within bounds)
-                let driftX = (Math.random() - 0.5) * 2; // Increased max drift H
-                let driftY = (Math.random() - 0.5) * 2; // Increased max drift V
+                // Use pixel values for drift, adjusted for smoother visual speed
+                let driftXpx = (Math.random() - 0.5) * 1.5; 
+                let driftYpx = (Math.random() - 0.5) * 1.5;
 
-                let newLeft = currentLeft + driftX;
-                let newTop = currentTop + driftY;
+                let nextTranslateX = currentTranslateX + driftXpx;
+                let nextTranslateY = currentTranslateY + driftYpx;
 
                 // --- Collision Avoidance with Title Block --- 
                 const itemRect = item.getBoundingClientRect(); // Get item dimensions once
                 // Calculate potential next position in pixels for collision check
-                const nextLeftPx = (newLeft / 100) * window.innerWidth;
-                const nextTopPx = (newTop / 100) * window.innerHeight;
+                // Position is initial + current translation
+                const nextLeftPx = data.initialPixelLeft + nextTranslateX;
+                const nextTopPx = data.initialPixelTop + nextTranslateY;
 
                 const nextItemRect = {
                     left: nextLeftPx,
@@ -194,46 +197,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Only apply drift if the next position does NOT overlap title
                 if (!overlaps) {
-                    // Bounds checking relative to the initial position to prevent excessive wandering
-                    const maxWanderH = 10; // Max 10% horizontal wander from initial
-                    const maxWanderV = 10; // Max 10% vertical wander from initial
+                    // Use pixel-based wander limits
+                    const maxWanderHPx = window.innerWidth * 0.10; // Max 10% viewport width wander
+                    const maxWanderVPx = window.innerHeight * 0.10; // Max 10% viewport height wander
 
-                    newLeft = Math.max(baseLeft - maxWanderH, Math.min(newLeft, baseLeft + maxWanderH));
-                    newTop = Math.max(baseTop - maxWanderV, Math.min(newTop, baseTop + maxWanderV));
+                    nextTranslateX = Math.max(-maxWanderHPx, Math.min(nextTranslateX, maxWanderHPx));
+                    nextTranslateY = Math.max(-maxWanderVPx, Math.min(nextTranslateY, maxWanderVPx));
 
-                    // Additional absolute bounds (prevent going off-screen if initial is near edge)
-                    const absMaxLeft = 100 - (itemRect.width / window.innerWidth * 100) - 2;
-                    const absMaxTop = 100 - (itemRect.height / window.innerHeight * 100) - 2;
-                    const absMin = 2;
-                    newLeft = Math.max(absMin, Math.min(newLeft, absMaxLeft));
-                    newTop = Math.max(absMin, Math.min(newTop, absMaxTop));
+                    // Recalculate pixel positions after wander clamping
+                    let finalLeftPx = data.initialPixelLeft + nextTranslateX;
+                    let finalTopPx = data.initialPixelTop + nextTranslateY;
 
-                    item.style.transition = 'top 4s ease-in-out, left 4s ease-in-out'; // Smoother timing function
-                    item.style.top = `${newTop}%`;
-                    item.style.left = `${newLeft}%`;
+                    // Calculate final translate based on clamped pixel positions
+                    data.currentTranslateX = finalLeftPx - data.initialPixelLeft;
+                    data.currentTranslateY = finalTopPx - data.initialPixelTop;
+
+                    item.style.transform = `translate(${data.currentTranslateX}px, ${data.currentTranslateY}px)`;
+                    // No JS transition needed with requestAnimationFrame
+                    // item.style.transition = 'transform 0.1s linear'; // Optionally add short CSS transition if needed
                 }
                 // --- End Collision Avoidance ---
             });
-        }, 3000); // Update drift slightly less often
+
+            // Request the next frame
+            driftAnimationId = requestAnimationFrame(driftLoop);
+        }
+
+        // Start the drift loop
+        driftAnimationId = requestAnimationFrame(driftLoop);
     }
 
     function stopDrifting() {
-        if (driftInterval) clearInterval(driftInterval);
-        driftInterval = null;
-        items.forEach(item => item.style.transition = ''); // Remove drift transition
+        if (driftAnimationId) cancelAnimationFrame(driftAnimationId);
+        driftAnimationId = null;
+        // Reset transform? Optional. Items will just stop drifting.
+        // items.forEach(item => item.style.transform = 'translate(0, 0)');
     }
 
-    // Start drifting initially
-    startDrifting();
-
-    // Optional: Stop drifting when a viewer is open?
-    // You might want to modify openViewer and closeViewer to call stopDrifting() and startDrifting()
-
-    // Set initial positions from data attributes
+    // Set initial positions from data attributes & initialize itemData
     items.forEach(item => {
-        item.style.top = `${item.dataset.initialTop}%`;
-        item.style.left = `${item.dataset.initialLeft}%`;
+        const initialTopPercent = parseFloat(item.dataset.initialTop);
+        const initialLeftPercent = parseFloat(item.dataset.initialLeft);
+        item.style.top = `${initialTopPercent}%`;
+        item.style.left = `${initialLeftPercent}%`;
+
+        // Store initial pixel positions and current transform state
+        itemData.set(item, {
+            initialPixelTop: (initialTopPercent / 100) * window.innerHeight,
+            initialPixelLeft: (initialLeftPercent / 100) * window.innerWidth,
+            currentTranslateX: 0,
+            currentTranslateY: 0
+        });
     });
+
+    // Start drifting *after* initial setup
+    startDrifting();
 
     // --- Animated Background Grid Logic --- 
     const gridContainer = document.getElementById('background-grid');
@@ -260,9 +278,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let gridAnimationInterval = null;
 
     function animateGrid() {
-        if (gridAnimationInterval) clearInterval(gridAnimationInterval);
-
-        gridAnimationInterval = setInterval(() => {
+        // Use requestAnimationFrame for smoother, more performant animation
+        function animationLoop() {
             if (gridSpans.length === 0) return;
 
             // Update more spans for better visibility
@@ -276,7 +293,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     randomSpan.style.opacity = 0.3 + Math.random() * 0.4; // More noticeable range (0.3 to 0.7)
                 }
             }
-        }, 100); // Update interval
+
+            // Request the next frame
+            requestAnimationFrame(animationLoop);
+        }
+
+        // Start the loop
+        requestAnimationFrame(animationLoop);
     }
 
     // Initial setup
