@@ -52,6 +52,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Add event listener for 'Escape' key to close open viewers
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            const openViewers = document.querySelectorAll('.content-viewer.visible');
+            openViewers.forEach(closeViewer);
+        }
+    });
+
     function openViewer(section) {
         // Close any currently open viewer first
         const openViewers = document.querySelectorAll('.content-viewer.visible');
@@ -70,7 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Fetch content if the placeholder is showing the loader (or is empty)
-            // (The trim check is technically redundant now but harmless)
             if (!placeholder.querySelector(':not(.loading-indicator)') || !placeholder.innerHTML.trim()) {
                 fetch(`${section}_content.html`)
                     .then(response => {
@@ -97,13 +104,14 @@ document.addEventListener('DOMContentLoaded', () => {
                                 closeViewer(viewer);
                              });
                         }
+                        
                         // Content loaded, remove loading indicator (if it was there)
                         const loadingIndicator = placeholder.querySelector('.loading-indicator');
                         if (loadingIndicator) loadingIndicator.remove();
 
                         // Make viewer visible *after* content is loaded
-                        // viewer.classList.add('visible'); // Moved earlier
-                        // document.body.classList.add('viewer-open'); // Moved earlier
+                        viewer.classList.add('visible');
+                        document.body.classList.add('viewer-open');
                     })
                     .catch(error => {
                         console.error('Error loading viewer content:', error);
@@ -119,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
                  // If content is already loaded, just make it visible
                 viewer.classList.add('visible');
                 document.body.classList.add('viewer-open'); // Dim background
+                
                 // Ensure no loader is visible if content was already there
                 const existingLoader = placeholder.querySelector('.loading-indicator');
                 if(existingLoader) existingLoader.remove();
@@ -212,7 +221,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     data.currentTranslateX = finalLeftPx - data.initialPixelLeft;
                     data.currentTranslateY = finalTopPx - data.initialPixelTop;
 
-                    item.style.transform = `translate(${data.currentTranslateX}px, ${data.currentTranslateY}px)`;
+                    // Apply BOTH initial rotation and current translation
+                    item.style.transform = `${data.initialRotateTransform} translate(${data.currentTranslateX}px, ${data.currentTranslateY}px)`;
                     // No JS transition needed with requestAnimationFrame
                     // item.style.transition = 'transform 0.1s linear'; // Optionally add short CSS transition if needed
                 }
@@ -241,17 +251,54 @@ document.addEventListener('DOMContentLoaded', () => {
         item.style.top = `${initialTopPercent}%`;
         item.style.left = `${initialLeftPercent}%`;
 
+        // Get initial rotation/transform from computed style
+        const computedStyle = window.getComputedStyle(item);
+        const initialTransform = computedStyle.transform;
+        // Store the initial transform only if it's not 'none' (default)
+        const initialRotateTransform = (initialTransform !== 'none') ? initialTransform : '';
+
         // Store initial pixel positions and current transform state
         itemData.set(item, {
             initialPixelTop: (initialTopPercent / 100) * window.innerHeight,
             initialPixelLeft: (initialLeftPercent / 100) * window.innerWidth,
             currentTranslateX: 0,
-            currentTranslateY: 0
+            currentTranslateY: 0,
+            initialRotateTransform: initialRotateTransform // Store the initial transform string
         });
     });
 
-    // Start drifting *after* initial setup
-    startDrifting();
+    // Start drifting if the screen is wide enough (or adjust logic as needed)
+    if (window.innerWidth > 768) { // Example breakpoint
+        startDrifting();
+    }
+
+    // Optional: Adjust drift on window resize
+    window.addEventListener('resize', () => {
+        // Recalculate initial pixel positions and restart drift if needed
+        items.forEach(item => {
+            const data = itemData.get(item);
+            if (data) {
+                const initialTopPercent = parseFloat(item.dataset.initialTop);
+                const initialLeftPercent = parseFloat(item.dataset.initialLeft);
+                data.initialPixelTop = (initialTopPercent / 100) * window.innerHeight;
+                data.initialPixelLeft = (initialLeftPercent / 100) * window.innerWidth;
+                // Reset translation? Or let it continue from current offset?
+                // data.currentTranslateX = 0;
+                // data.currentTranslateY = 0;
+            }
+        });
+        // Optionally restart drifting based on new size
+        if (window.innerWidth > 768) {
+             if (!driftAnimationId) startDrifting(); // Start if stopped
+        } else {
+            stopDrifting();
+            // Reset transforms if stopping drift?
+            items.forEach(item => {
+                const data = itemData.get(item);
+                 item.style.transform = data ? data.initialRotateTransform : ''; // Reset to initial rotation
+             });
+        }
+    });
 
     // --- Animated Background Grid Logic --- 
     const gridContainer = document.getElementById('background-grid');
@@ -316,3 +363,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 250);
     });
 }); 
+
+// --- Helper: Debounce function (optional, useful for resize)
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}; 

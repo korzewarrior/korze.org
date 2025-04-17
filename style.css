@@ -5,6 +5,18 @@
     box-sizing: border-box;
 }
 
+/* CSS Variables for consistent colors */
+:root {
+    --accent-bright: #e0e0e0; 
+    --accent-dim: #444; 
+    --accent-link: #87ceeb; 
+    --accent-hover: #d0a0ff; 
+    --background-dark: #1a1a1a; 
+    --background-light: rgba(50, 50, 50, 0.7); 
+    --text-primary: #e0e0e0; 
+    --text-secondary: #ccc; 
+}
+
 /* Load Custom Font */
 @font-face {
     font-family: 'TypewriterFont';
@@ -15,8 +27,8 @@
 
 body {
     font-family: 'TypewriterFont', monospace, sans-serif; /* Apply typewriter font */
-    background-color: #1a1a1a; /* Dark background */
-    color: #e0e0e0; /* Light text */
+    background-color: var(--background-dark); /* Dark background */
+    color: var(--text-primary); /* Light text */
     overflow: hidden; /* Prevent scrollbars during initial load/setup */
     text-transform: lowercase; /* Global lowercase */
 }
@@ -25,10 +37,9 @@ body {
     position: relative;
     width: 100vw;
     height: 100vh;
-    /* background: url('paper.jpg') center/cover; */ /* Removed paper texture */
-    background-color: transparent; /* Make this layer see-through */
-    overflow: hidden; /* Keep preventing scroll */
-    z-index: 2; /* Ensure this is above grid and scanlines */
+    background-color: transparent;
+    overflow: hidden;
+    z-index: 2;
 }
 
 /* Noise/Scanline Overlay */
@@ -70,6 +81,10 @@ body {
     align-content: flex-start;
     overflow: hidden;
     pointer-events: none; /* Not interactive */
+    user-select: none; /* Prevent text selection */
+    -webkit-user-select: none; /* Safari support */
+    -moz-user-select: none; /* Firefox support */
+    -ms-user-select: none; /* IE/Edge support */
 }
 
 #background-grid span {
@@ -82,13 +97,17 @@ body {
     color: rgba(224, 224, 224, 0.2); /* Subtle grid color */
     transition: color 0.5s ease, opacity 0.5s ease; /* Smooth transitions */
     opacity: 0.2; /* Subtle grid opacity */
+    user-select: none; /* Prevent text selection */
+    -webkit-user-select: none; /* Safari support */
+    -moz-user-select: none; /* Firefox support */
+    -ms-user-select: none; /* IE/Edge support */
 }
 
 /* Styles for Workbench Items */
 .workbench-item {
-    position: absolute; /* Position items freely */
-    background-color: rgba(50, 50, 50, 0.7); /* Semi-transparent background */
-    border: 1px solid #444;
+    position: absolute;
+    background-color: var(--background-light);
+    border: 1px solid var(--accent-dim);
     padding: 20px;
     border-radius: 8px;
     cursor: pointer;
@@ -101,15 +120,18 @@ body {
     justify-content: center;
     align-items: center;
     gap: 10px;
-    color: #ccc;
-    /* z-index: 2; */ /* Removed - items live within #interactive-space context */
+    color: var(--text-secondary);
+    user-select: none; /* Prevent text selection */
+    -webkit-user-select: none; /* Safari support */
+    -moz-user-select: none; /* Firefox support */
+    -ms-user-select: none; /* IE/Edge support */
 }
 
 /* Keyframes for Glitch Effect - Simplified to Color Pulse */
 @keyframes glitch-hover {
-    0% { background-color: rgba(50, 50, 50, 0.7); } /* Start Grey */
-    50% { background-color: rgba(190, 147, 253, 0.9); } /* Brighter Midpoint Purple */
-    100% { background-color: rgba(50, 50, 50, 0.7); } /* End Grey */
+    0% { background-color: var(--background-light); }
+    50% { background-color: rgba(190, 147, 253, 0.9); }
+    100% { background-color: var(--background-light); }
 }
 
 /* Keyframes for More Intense Click Glitch */
@@ -128,9 +150,7 @@ body {
 }
 
 .workbench-item:hover {
-    /* Replace standard hover with glitch animation */
-    animation: glitch-hover 1.5s ease-in-out infinite alternate; /* Slower, smoother, alternates */
-    /* Keep a subtle shadow maybe? */
+    animation: glitch-hover 1.5s ease-in-out infinite alternate;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
 }
 
@@ -152,20 +172,20 @@ body {
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) scale(0.9); /* Start slightly scaled down */
+    transform: translate(-50%, -50%) scale(0.9);
     width: 80%;
     max-width: 800px;
     max-height: 80vh;
-    background-color: rgba(30, 30, 30, 0.95); /* Darker, less transparent */
-    border: 1px solid #555;
+    background-color: rgba(10, 10, 10, 0.95);
+    border: 1px solid #444;
     border-radius: 10px;
-    padding: 40px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
     z-index: 1000;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.4s ease, visibility 0s linear 0.4s, transform 0.4s ease;
-    overflow-y: auto; /* Allow scrolling if content exceeds height */
+    overflow-y: auto;
+    padding: 0; /* Remove padding */
 }
 
 .content-viewer.visible {
@@ -176,26 +196,35 @@ body {
 }
 
 .close-btn {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    background: none;
-    border: none;
-    color: #aaa;
-    font-size: 2.5em;
-    line-height: 1;
-    cursor: pointer;
-    transition: color 0.2s ease;
+    position: absolute !important;
+    top: 50% !important;
+    right: 15px !important;
+    transform: translateY(-50%) !important; /* Center vertically */
+    background: none !important;
+    border: none !important;
+    color: #aaa !important;
+    font-size: 2.5em !important;
+    line-height: 1 !important;
+    cursor: pointer !important;
+    transition: color 0.2s ease !important;
+    z-index: 1001 !important; /* Ensure it's above other content */
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 30px !important;
+    height: 30px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 .close-btn:hover {
-    color: #fff;
+    color: #fff !important;
 }
 
 .content-viewer h2 {
     margin-bottom: 20px;
-    color: #eee;
-    border-bottom: 1px solid #444;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--accent-dim);
     padding-bottom: 10px;
 }
 
@@ -239,38 +268,31 @@ body.viewer-open #interactive-space {
     transform: rotate(-2deg);
 }
 
+/* Add styling for blog item to match others */
+#item-blog {
+    top: 50%;
+    left: 50%;
+    transform: rotate(6deg); /* Make it chaotic like the others */
+}
+
 /* Styles for Project Entries within Viewers */
 .project-entry {
-    background-color: rgba(60, 60, 60, 0.5);
-    border: 1px solid #4a4a4a;
-    border-radius: 6px;
-    padding: 20px;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
+    padding: 0; /* Remove padding here */
+    color: #e0e0e0;
+    border: none; /* Remove borders */
+    background-color: transparent; /* Remove background */
+    border-radius: 0;
 }
 
 .project-entry h3 {
-    color: #d0a0ff; /* A distinct color for project titles */
+    color: #d0a0ff; /* Match new heading color */
     margin-bottom: 15px;
 }
 
 .project-entry p {
-    margin-bottom: 8px;
-    color: #bbb;
-}
-
-.project-entry strong {
-    color: #ddd;
-}
-
-.project-image {
-    max-width: 100%;
-    height: auto;
-    border-radius: 4px;
-    margin-bottom: 15px;
-    border: 1px solid #555;
-    background-color: #2a2a2a; /* BG for missing images */
-    display: block; /* Prevents extra space below */
-    min-height: 100px; /* Ensure space even if image fails */
+    margin-bottom: 1em;
+    color: #e0e0e0;
 }
 
 /* Styles for Photo Gallery within Viewer */
@@ -282,10 +304,10 @@ body.viewer-open #interactive-space {
 }
 
 .photo-item {
-    background-color: rgba(60, 60, 60, 0.5);
-    border: 1px solid #4a4a4a;
-    border-radius: 4px;
-    padding: 10px;
+    background-color: transparent; /* Remove background */
+    border: none; /* Remove border */
+    border-radius: 0;
+    padding: 10px 0;
     text-align: center;
 }
 
@@ -310,11 +332,11 @@ body.viewer-open #interactive-space {
 .code-link {
     color: #87ceeb; /* Sky blue color for links */
     text-decoration: none;
-    transition: color 0.2s ease, text-decoration 0.2s ease;
+    transition: color 0.2s ease;
 }
 
 .code-link:hover {
-    color: #a0e0ff;
+    color: #d0a0ff;
     text-decoration: underline;
 }
 
@@ -420,6 +442,10 @@ body.viewer-open #interactive-space {
     z-index: 3; /* Above background/scanlines, below viewers */
     max-width: 300px; /* Prevent it getting too wide */
     pointer-events: none; /* Make non-interactive */
+    user-select: none; /* Prevent text selection */
+    -webkit-user-select: none; /* Safari support */
+    -moz-user-select: none; /* Firefox support */
+    -ms-user-select: none; /* IE/Edge support */
 }
 
 .intro-content h1 {
@@ -450,4 +476,314 @@ body.viewer-open #interactive-space {
     margin-top: 10px;
     font-style: italic;
     color: #bbb;
+}
+
+/* --------------------
+ * Content Viewer Specifics
+ * -------------------- */
+
+/* Style for the content loaded into viewers */
+.viewer-content-placeholder {
+    padding: 0 !important;
+    background-color: rgba(10, 10, 10, 0.8) !important;
+}
+
+.viewer-content-placeholder img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 15px 0;
+}
+
+/* Make viewer header more prominent with darker background */
+.viewer-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 15px 20px !important;
+    border-bottom: 1px solid #444 !important;
+    background-color: rgba(20, 20, 20, 0.95) !important;
+    position: relative !important;
+    height: 60px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    user-select: none !important; /* Prevent text selection */
+    -webkit-user-select: none !important; /* Safari support */
+    -moz-user-select: none !important; /* Firefox support */
+    -ms-user-select: none !important; /* IE/Edge support */
+}
+
+.viewer-header h2 {
+    margin: 0 !important;
+    font-size: 1.3em !important;
+    color: #e0e0e0 !important;
+    text-transform: lowercase !important;
+    font-family: 'TypewriterFont', monospace !important;
+    font-weight: normal !important;
+}
+
+/* Specific styles for Code content (example) */
+#viewer-code .viewer-content-placeholder {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: rgba(10, 10, 10, 0.8); /* Darker background for code */
+    color: #eee;
+}
+
+/* Styles for Blog Posts */
+.blog-post {
+    margin-bottom: 30px;
+    padding: 10px 0;
+    color: #e0e0e0;
+    font-family: 'TypewriterFont', monospace;
+}
+
+.blog-post h1,
+.blog-post h2,
+.blog-post h3 {
+    color: #d0a0ff; /* Light purple color to stand out */
+    margin-top: 1.5em;
+    margin-bottom: 0.8em;
+    font-family: 'TypewriterFont', monospace;
+    font-weight: normal;
+}
+
+.blog-post h1 {
+    font-size: 1.8em;
+    border-bottom: 1px solid #444;
+    padding-bottom: 0.3em;
+}
+
+.blog-post h2 {
+    font-size: 1.5em;
+    border-bottom: 1px dotted #333;
+    padding-bottom: 0.3em;
+}
+
+.blog-post h3 {
+    font-size: 1.2em;
+    color: #87ceeb; /* Light blue for h3 to distinguish */
+}
+
+.blog-post p {
+    line-height: 1.7;
+    margin-bottom: 1em;
+    font-size: 1em;
+}
+
+.blog-post code {
+    background-color: rgba(0, 0, 0, 0.4); /* Darker background for inline code */
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    color: #f8f8f2; /* Brighter code text */
+    white-space: pre-wrap;
+}
+
+.blog-post pre {
+    background-color: rgba(0, 0, 0, 0.6); /* Darker background for code blocks */
+    padding: 15px;
+    border-radius: 5px;
+    overflow-x: auto;
+    margin: 1em 0;
+    border: 1px solid #333;
+}
+
+.blog-post pre code {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    white-space: pre;
+    display: block;
+    overflow-x: auto;
+    color: #f8f8f2;
+    line-height: 1.5;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    tab-size: 4;
+}
+
+.blog-post table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+    background-color: rgba(0, 0, 0, 0.3); /* Darker table background */
+}
+
+.blog-post th, 
+.blog-post td {
+    padding: 8px;
+    border: 1px solid #333;
+    text-align: left;
+}
+
+.blog-post th {
+    background-color: rgba(0, 0, 0, 0.5); /* Even darker header background */
+    color: #d0a0ff; /* Match heading color */
+}
+
+.blog-post tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.2); /* Subtle alternating rows */
+}
+
+.blog-post ul,
+.blog-post ol {
+    margin-left: 20px;
+    margin-bottom: 1em;
+}
+
+.blog-post li {
+    margin-bottom: 0.5em;
+}
+
+.blog-post blockquote {
+    border-left: 4px solid #444;
+    padding-left: 15px;
+    margin-left: 0;
+    font-style: italic;
+    color: #ccc;
+}
+
+.post-separator {
+    border: none;
+    border-top: 1px dashed #444;
+    margin: 30px 0;
+    width: 100%;
+}
+
+/* Loading indicators */
+.loading-indicator {
+    text-align: center;
+    font-style: italic;
+    color: #aaa;
+    padding: 20px;
+    font-size: 1.2em;
+}
+
+/* Fix container to match blog posts - make this the only background */
+#blog-posts-container {
+    background-color: rgba(10, 10, 10, 0.95); /* Darker background */
+    padding: 25px;
+}
+
+/* Apply consistent styling to all content viewer placeholders */
+.viewer-content-placeholder {
+    padding: 0 !important; /* Remove default padding */
+    background-color: rgba(10, 10, 10, 0.8) !important; /* Dark background */
+}
+
+/* Style for ALL content containers in viewers, not just blog */
+#viewer-games .viewer-content-placeholder,
+#viewer-photos .viewer-content-placeholder,
+#viewer-code .viewer-content-placeholder,
+#viewer-about .viewer-content-placeholder,
+#viewer-blog .viewer-content-placeholder,
+#blog-posts-container {
+    background-color: rgba(10, 10, 10, 0.95) !important; /* Darker background */
+    padding: 25px !important;
+    color: #e0e0e0 !important;
+    font-family: 'TypewriterFont', monospace !important;
+}
+
+/* Consistent heading styles across all viewers */
+.viewer-content-placeholder h1,
+.viewer-content-placeholder h2,
+.viewer-content-placeholder h3,
+.blog-post h1,
+.blog-post h2,
+.blog-post h3 {
+    color: #d0a0ff; /* Light purple color to stand out */
+    margin-top: 1.5em;
+    margin-bottom: 0.8em;
+    font-family: 'TypewriterFont', monospace;
+    font-weight: normal;
+}
+
+.viewer-content-placeholder h1,
+.blog-post h1 {
+    font-size: 1.8em;
+    border-bottom: 1px solid #444;
+    padding-bottom: 0.3em;
+}
+
+.viewer-content-placeholder h2,
+.blog-post h2 {
+    font-size: 1.5em;
+    border-bottom: 1px dotted #333;
+    padding-bottom: 0.3em;
+}
+
+.viewer-content-placeholder h3,
+.blog-post h3 {
+    font-size: 1.2em;
+    color: #87ceeb; /* Light blue for h3 to distinguish */
+}
+
+/* Consistent paragraph styling for all viewers */
+.viewer-content-placeholder p,
+.blog-post p {
+    line-height: 1.7;
+    margin-bottom: 1em;
+    font-size: 1em;
+    color: #e0e0e0;
+}
+
+/* Fix project entries to match the blog post styling */
+.project-entry {
+    margin-bottom: 30px;
+    padding: 0; /* Remove padding here */
+    color: #e0e0e0;
+    border: none; /* Remove borders */
+    background-color: transparent; /* Remove background */
+    border-radius: 0;
+}
+
+.project-entry h3 {
+    color: #d0a0ff; /* Match new heading color */
+    margin-bottom: 15px;
+}
+
+.project-entry p {
+    margin-bottom: 1em;
+    color: #e0e0e0;
+}
+
+/* Fix photo gallery items to match the blog style */
+.photo-item {
+    background-color: transparent; /* Remove background */
+    border: none; /* Remove border */
+    border-radius: 0;
+    padding: 10px 0;
+    text-align: center;
+}
+
+/* Fix code links to match blog links */
+.code-link {
+    color: #87ceeb; /* Sky blue color for links */
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.code-link:hover {
+    color: #d0a0ff;
+    text-decoration: underline;
+}
+
+/* Consistent link styling across all sections */
+.code-link,
+.external-link,
+.viewer-content-placeholder a,
+.blog-post a {
+    color: #87ceeb; /* Sky blue color for links */
+    text-decoration: none;
+    transition: color 0.2s ease;
+    border-bottom: 1px dotted rgba(135, 206, 235, 0.4);
+}
+
+.code-link:hover,
+.external-link:hover,
+.viewer-content-placeholder a:hover,
+.blog-post a:hover {
+    color: #d0a0ff; /* Light purple on hover */
+    border-bottom: 1px solid rgba(208, 160, 255, 0.6);
 } 

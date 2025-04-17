@@ -6,6 +6,24 @@
     <title>korze(warrior)</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        // Configure marked renderer defaults when loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof marked !== 'undefined') {
+                // Set better defaults for markdown parsing
+                marked.setOptions({
+                    gfm: true, // GitHub flavored markdown
+                    breaks: false, // Don't convert line breaks to <br>
+                    pedantic: false,
+                    smartLists: true,
+                    smartypants: true,
+                    xhtml: false,
+                    headerIds: false // Don't add ids to headers
+                });
+            }
+        });
+    </script>
 </head>
 <body>
     <div id="background-grid"></div> <!-- Container for animated background -->
@@ -31,6 +49,11 @@
             <span>*</span>
              <p>About</p>
         </div>
+        <div class="workbench-item" id="item-blog" data-section="blog" data-initial-top="50" data-initial-left="50">
+            <!-- Icon/Image for Blog (Placeholder) -->
+            <span>¶</span>
+             <p>Blog</p>
+        </div>
     </div>
 
     <div class="intro-content">
@@ -55,6 +78,11 @@
     </div>
 
     <div id="viewer-about" class="content-viewer" data-viewer="about">
+       <div class="viewer-content-placeholder"></div> <!-- Content will be loaded here -->
+    </div>
+
+    <!-- New Blog Viewer -->
+    <div id="viewer-blog" class="content-viewer" data-viewer="blog">
        <div class="viewer-content-placeholder"></div> <!-- Content will be loaded here -->
     </div>
 
