@@ -4,51 +4,6 @@
 </div>
 
 <div id="blog-posts-container">
-    <article class="blog-post">
-        <h2>Stop calling C++ headers `.h`</h2>
-        <p>Here's the short of it: if a header is meant only for C++, name it <code>something.hpp</code>. Leave <code>.h</code> for the rare files that really do compile under C as well.</p>
-        <h3>Why I bother:</h3>
-        <ul>
-            <li>My editor and linter flip into the right mode when they see <code>.hpp</code>, so I don't get bogus warnings.</li>
-            <li>A quick <code>grep --include='*.hpp'</code> skips every C header in the repo. Big time‑saver.</li>
-            <li>New devs don't have to ask whether <code>utils.h</code> is safe to include from C.</li>
-        </ul>
-        <p>Nothing magical here—the pre‑processor will gladly pull in <code>sandwich.bun</code> if you ask. This is just about not tripping up people and tools. Two extra letters, endless micro‑wins.</p>
-        <p>Got mixed feelings? Keep the legacy <code>.h</code> files as‑is. For anything new that's C++‑only, stick with <code>.hpp</code> and call it a day.</p>
-        <p>That's it. Happy coding.</p>
-    </article>
-
-    <hr class="post-separator">
-    
-    <article class="blog-post">
-        <h2>delete vs ::delete in C++</h2>
-        <p>Most of the time you just write:</p>
-        <pre><code>Base* ptr = new Derived();
-delete ptr;           // virtual destructor cleans up Derived as expected</code></pre>
-        <p><code>delete</code> does two things: it runs the destructor <em>and</em> it calls the deallocation function that matches the allocation used.</p>
-        <p>If you add the global-scope qualifier:</p>
-        <pre><code>::delete ptr;         // forces the global operator delete</code></pre>
-        <p>you bypass overload resolution and ask for the plain global <code>operator delete</code>. On <strong>GCC</strong> and <strong>Clang</strong> that means the sized-delete overload is selected with <code>sizeof(Base)</code>, so only the base-class portion of the allocation is released. <strong>MSVC</strong> still frees the full block because it passes the real size through the destructor.</p>
-        <h3>When would you ever want <code>::delete</code>?</h3>
-        <p>Pretty much only when you're writing allocator glue or testing something very low-level and you <em>need</em> to skip class-specific or placement deletes. For everyday code, stick with plain <code>delete</code>.</p>
-        <h3>Quick checklist</h3>
-        <table>
-            <tr>
-                <th>Expression</th>
-                <th>What happens</th>
-                <th>Safe to use</th>
-            </tr>
-            <tr>
-                <td><code>delete ptr;</code></td>
-                <td>Runs dynamic destructor, calls matching deallocator</td>
-                <td>✅</td>
-            </tr>
-            <tr>
-                <td><code>::delete ptr;</code></td>
-                <td>Forces global deallocator; size may be wrong on GCC/Clang</td>
-                <td>❌</td>
-            </tr>
-        </table>
-        <p><strong>Bottom line:</strong> use plain <code>delete</code> unless you have a concrete, allocator-level reason to do otherwise.</p>
-    </article>
+    <!-- Posts will be loaded dynamically from markdown files -->
+    <p class="loading-indicator">[fetching blog posts...]</p>
 </div> 

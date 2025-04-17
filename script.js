@@ -60,6 +60,67 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Function to load blog posts from markdown files
+    function loadBlogPosts() {
+        const blogContainer = document.getElementById('blog-posts-container');
+        if (!blogContainer) return;
+
+        // Show loading indicator
+        blogContainer.innerHTML = '<p class="loading-indicator">[fetching blog posts...]</p>';
+
+        // Try PHP API first, then fall back to JS version
+        fetch('blog_api.php')
+            .then(response => {
+                if (!response.ok) {
+                    // PHP failed, use JavaScript fallback
+                    console.log('PHP API failed, using JavaScript fallback');
+                    return getBlogPosts(); // This is from blog_api.js
+                }
+                return response.json();
+            })
+            .catch(error => {
+                // Network error or PHP not available, use JavaScript fallback
+                console.log('Using JavaScript fallback due to error:', error);
+                return getBlogPosts(); // This is from blog_api.js
+            })
+            .then(data => {
+                if (!data || !data.success || !data.posts || data.posts.length === 0) {
+                    blogContainer.innerHTML = '<p class="error-message">no blog posts found.</p>';
+                    return;
+                }
+
+                // Clear container
+                blogContainer.innerHTML = '';
+
+                // Process each post
+                data.posts.forEach((post, index) => {
+                    // Create article element
+                    const article = document.createElement('article');
+                    article.className = 'blog-post';
+
+                    // Convert markdown to HTML using marked library
+                    const postHtml = marked.parse(post.content);
+                    
+                    // Add the HTML to the article
+                    article.innerHTML = postHtml;
+
+                    // Add to container
+                    blogContainer.appendChild(article);
+
+                    // Add separator if not the last post
+                    if (index < data.posts.length - 1) {
+                        const separator = document.createElement('hr');
+                        separator.className = 'post-separator';
+                        blogContainer.appendChild(separator);
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error loading blog posts from both sources:', error);
+                blogContainer.innerHTML = '<p class="error-message">error fetching blog posts.</p>';
+            });
+    }
+
     function openViewer(section) {
         // Close any currently open viewer first
         const openViewers = document.querySelectorAll('.content-viewer.visible');
@@ -77,8 +138,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.body.classList.add('viewer-open');
             }
 
-            // Fetch content if the placeholder is showing the loader (or is empty)
-            if (!placeholder.querySelector(':not(.loading-indicator)') || !placeholder.innerHTML.trim()) {
+            // Special handling for blog section
+            if (section === 'blog') {
+                // Fetch blog content HTML structure (without posts)
                 fetch(`${section}_content.html`)
                     .then(response => {
                         if (!response.ok) {
@@ -87,50 +149,86 @@ document.addEventListener('DOMContentLoaded', () => {
                         return response.text();
                     })
                     .then(html => {
-                        // Ensure placeholder is cleared before adding new content if loader was present
-                        const loader = placeholder.querySelector('.loading-indicator');
-                        if (loader) {
-                            placeholder.innerHTML = html; // Replace loader
-                        } else {
-                            // If somehow content loaded without loader (e.g., error state cleared?), just set it
-                            placeholder.innerHTML = html;
-                        }
-
-                        // Re-attach close button listener if it's part of the loaded content
-                        const closeButton = placeholder.querySelector('.close-btn');
-                        if (closeButton && viewer) { // Ensure viewer is valid
-                             closeButton.addEventListener('click', (event) => {
-                                event.stopPropagation(); // Prevent outside click listener from firing
-                                closeViewer(viewer);
-                             });
-                        }
+                        placeholder.innerHTML = html;
                         
-                        // Content loaded, remove loading indicator (if it was there)
-                        const loadingIndicator = placeholder.querySelector('.loading-indicator');
-                        if (loadingIndicator) loadingIndicator.remove();
+                        // Attach close button listener
+                        const closeButton = placeholder.querySelector('.close-btn');
+                        if (closeButton) {
+                            closeButton.addEventListener('click', (event) => {
+                                event.stopPropagation();
+                                closeViewer(viewer);
+                            });
+                        }
 
-                        // Make viewer visible *after* content is loaded
+                        // Make viewer visible
                         viewer.classList.add('visible');
                         document.body.classList.add('viewer-open');
+                        
+                        // Load blog posts dynamically
+                        loadBlogPosts();
                     })
                     .catch(error => {
                         console.error('Error loading viewer content:', error);
-                        placeholder.innerHTML = '<p class="error-message">error fetching bits.</p>'; // Use error class
-                         // Still show the viewer with the error message
-                         viewer.classList.add('visible');
+                        placeholder.innerHTML = '<p class="error-message">error fetching bits.</p>';
+                        viewer.classList.add('visible');
                         document.body.classList.add('viewer-open');
-                        // Ensure no loader is visible if content was already there
-                        const existingLoader = placeholder.querySelector('.loading-indicator');
-                        if(existingLoader) existingLoader.remove();
                     });
             } else {
-                 // If content is already loaded, just make it visible
-                viewer.classList.add('visible');
-                document.body.classList.add('viewer-open'); // Dim background
-                
-                // Ensure no loader is visible if content was already there
-                const existingLoader = placeholder.querySelector('.loading-indicator');
-                if(existingLoader) existingLoader.remove();
+                // Fetch content if the placeholder is showing the loader (or is empty)
+                if (!placeholder.querySelector(':not(.loading-indicator)') || !placeholder.innerHTML.trim()) {
+                    fetch(`${section}_content.html`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! Status: ${response.status}`);
+                            }
+                            return response.text();
+                        })
+                        .then(html => {
+                            // Ensure placeholder is cleared before adding new content if loader was present
+                            const loader = placeholder.querySelector('.loading-indicator');
+                            if (loader) {
+                                placeholder.innerHTML = html; // Replace loader
+                            } else {
+                                // If somehow content loaded without loader (e.g., error state cleared?), just set it
+                                placeholder.innerHTML = html;
+                            }
+
+                            // Re-attach close button listener if it's part of the loaded content
+                            const closeButton = placeholder.querySelector('.close-btn');
+                            if (closeButton && viewer) { // Ensure viewer is valid
+                                closeButton.addEventListener('click', (event) => {
+                                    event.stopPropagation(); // Prevent outside click listener from firing
+                                    closeViewer(viewer);
+                                });
+                            }
+                            
+                            // Content loaded, remove loading indicator (if it was there)
+                            const loadingIndicator = placeholder.querySelector('.loading-indicator');
+                            if (loadingIndicator) loadingIndicator.remove();
+
+                            // Make viewer visible *after* content is loaded
+                            viewer.classList.add('visible');
+                            document.body.classList.add('viewer-open');
+                        })
+                        .catch(error => {
+                            console.error('Error loading viewer content:', error);
+                            placeholder.innerHTML = '<p class="error-message">error fetching bits.</p>'; // Use error class
+                            // Still show the viewer with the error message
+                            viewer.classList.add('visible');
+                            document.body.classList.add('viewer-open');
+                            // Ensure no loader is visible if content was already there
+                            const existingLoader = placeholder.querySelector('.loading-indicator');
+                            if(existingLoader) existingLoader.remove();
+                        });
+                } else {
+                    // If content is already loaded, just make it visible
+                    viewer.classList.add('visible');
+                    document.body.classList.add('viewer-open'); // Dim background
+                    
+                    // Ensure no loader is visible if content was already there
+                    const existingLoader = placeholder.querySelector('.loading-indicator');
+                    if(existingLoader) existingLoader.remove();
+                }
             }
         }
     }
