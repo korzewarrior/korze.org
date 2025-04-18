@@ -349,7 +349,16 @@ document.addEventListener('DOMContentLoaded', () => {
         item.style.top = `${initialTopPercent}%`;
         item.style.left = `${initialLeftPercent}%`;
 
-        // Get initial rotation/transform from computed style
+        // Apply initial rotation directly
+        const rotationValue = item.id === 'item-games' ? -5 : 
+                             item.id === 'item-photos' ? 3 :
+                             item.id === 'item-code' ? 8 :
+                             item.id === 'item-about' ? -2 : 
+                             item.id === 'item-blog' ? 6 : 0;
+        
+        item.style.transform = `rotate(${rotationValue}deg)`;
+
+        // Get computed style after applying rotation
         const computedStyle = window.getComputedStyle(item);
         const initialTransform = computedStyle.transform;
         // Store the initial transform only if it's not 'none' (default)
@@ -363,12 +372,29 @@ document.addEventListener('DOMContentLoaded', () => {
             currentTranslateY: 0,
             initialRotateTransform: initialRotateTransform // Store the initial transform string
         });
+
+        // Add a small random offset to start with
+        const randomOffset = {
+            x: (Math.random() - 0.5) * 20,
+            y: (Math.random() - 0.5) * 20
+        };
+        
+        // Apply initial random offset
+        const data = itemData.get(item);
+        if (data) {
+            data.currentTranslateX = randomOffset.x;
+            data.currentTranslateY = randomOffset.y;
+            item.style.transform = `${data.initialRotateTransform} translate(${randomOffset.x}px, ${randomOffset.y}px)`;
+        }
     });
 
-    // Start drifting if the screen is wide enough (or adjust logic as needed)
-    if (window.innerWidth > 768) { // Example breakpoint
-        startDrifting();
-    }
+    // Delay starting the drift animation to ensure everything is properly initialized
+    setTimeout(() => {
+        // Start drifting if the screen is wide enough (or adjust logic as needed)
+        if (window.innerWidth > 768) { // Example breakpoint
+            startDrifting();
+        }
+    }, 500); // 500ms delay
 
     // Optional: Adjust drift on window resize
     window.addEventListener('resize', () => {
